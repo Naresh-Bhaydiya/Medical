@@ -4,3 +4,4 @@ python-decouple
 streamlit
 flask
 gunicorn
+langchain-pinecone
