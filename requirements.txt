@@ -3,3 +3,4 @@ pinecone
 python-decouple
 streamlit
 flask
+gunicorn
