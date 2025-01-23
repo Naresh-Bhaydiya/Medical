@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical ChatBot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f4f7f6;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #chatBox {
+            height: 450px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #fff;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .user-message {
+            background-color: #e6f2ff;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .bot-message {
+            background-color: #f0f0f0;
+            align-self: flex-start;
+        }
+        #loader {
+            text-align: center;
+            margin: 10px 0;
+            color: #6c757d;
+        }
+        .input-group {
+            position: relative;
+        }
+        #sendButton {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card chat-container">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4 class="mb-0">Medical ChatBot Assistant</h4>
+                    </div>
+                    <div id="chatBox" class="d-flex flex-column">
+                        <div class="message bot-message align-self-start">
+                            Welcome! I'm your medical assistant. How can I help you today?
+                        </div>
+                    </div>
+                    <div id="loader" class="d-none">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                id="userBox" 
+                                class="form-control" 
+                                placeholder="Ask a medical question..."
+                                onkeypress="handleKeyPress(event)"
+                            >
+                            <button 
+                                id="sendButton" 
+                                onclick="talk()" 
+                                class="btn"
+                            >
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                talk();
+            }
+        }
+
+        function talk() {
+            const userBox = $('#userBox');
+            const userMessage = userBox.val().trim();
+            
+            if (!userMessage) return;
+
+            userBox.val('');
+
+            // Add user message to chat
+            $('#chatBox').append(`
+                <div class="message user-message align-self-end">
+                    ${userMessage}
+                </div>
+            `);
+
+            // Show loader
+            $('#loader').removeClass('d-none');
+
+            // Scroll to bottom
+            scrollToBottom();
+
+            $.ajax({
+                url: "/query",
+                method: "GET",
+                data: { text: userMessage },
+                success: function(response) {
+                    console.log("----------",response)
+                    // Hide loader
+                    $('#loader').addClass('d-none');
+
+                    // Add bot response
+                    $('#chatBox').append(`
+                        <div class="message bot-message align-self-start">
+                            ${response.response}
+                        </div>
+                    `);
+
+                    scrollToBottom();
+                },
+                error: function() {
+                    // Hide loader
+                    $('#loader').addClass('d-none');
+
+                    // Add error message
+                    $('#chatBox').append(`
+                        <div class="message bot-message align-self-start text-danger">
+                            Sorry, I couldn't process your request. Please try again.
+                        </div>
+                    `);
+
+                    scrollToBottom();
+                }
+            });
+        }
+
+        function scrollToBottom() {
+            const chatBox = $('#chatBox');
+            chatBox.scrollTop(chatBox[0].scrollHeight);
+        }
+    </script>
+</body>
+</html>
