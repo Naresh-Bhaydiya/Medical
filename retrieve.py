@@ -202,7 +202,6 @@ class MedicalVectorSearch:
             # Generate response using Cohere
             response = self.cohere_client.generate(
                 prompt=f"""You are a sophisticated Medical Consulting Bot designed to provide empathetic, accurate, and personalized medical guidance to patients. Your primary objectives are:
-
                 1. Consultation Purpose:
                 - Offer reliable medical information and advice
                 - Provide compassionate and clear explanations

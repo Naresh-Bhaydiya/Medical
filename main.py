@@ -91,22 +91,42 @@ def get_conversational_chain():
         memory=memory
     )
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 from retrieve import MedicalVectorSearch
+
+# @app.route("/query", methods=["GET"])
+# def query():
+#     user_query = request.args.get("text", "")
+#     try:
+#         # Search similar documents in Pinecone
+
+#         medical_bot = MedicalVectorSearch()
+#         response = medical_bot.generate_response(user_query)
+#         # # Run QA chain with the context
+#         # chain = get_conversational_chain()
+#         # answer = chain.run(input={"context": context_docs, "question": user_query})
+#         return jsonify({"response": response})
+#     except Exception as e:
+#         print(f"Error occurred: {str(e)}")
+#         return jsonify({"error": str(e)}), 500
+
+
+
 @app.route("/query", methods=["GET"])
 def query():
     user_query = request.args.get("text", "")
     try:
-        # Search similar documents in Pinecone
-
+        # Initialize your bot logic here (replace with your actual implementation)
         medical_bot = MedicalVectorSearch()
         response = medical_bot.generate_response(user_query)
-        # # Run QA chain with the context
-        # chain = get_conversational_chain()
-        # answer = chain.run(input={"context": context_docs, "question": user_query})
+
+        # Respond with the generated answer
         return jsonify({"response": response})
+    
     except Exception as e:
         print(f"Error occurred: {str(e)}")
         return jsonify({"error": str(e)}), 500
